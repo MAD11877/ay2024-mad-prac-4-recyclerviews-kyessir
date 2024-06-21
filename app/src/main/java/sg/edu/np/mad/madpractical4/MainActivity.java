@@ -1,5 +1,6 @@
 package sg.edu.np.mad.madpractical4;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,9 +20,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        User user = new User("John Doe", "MAD Developer", 1, false);
+        user.setDescription("MAD Developer");
+        user.setId(1);
+        user.setFollowed(false);
 
         // Find the TextView by its ID
-        TextView myTextView = findViewById(R.id.textView2);
+        TextView tvName = findViewById(R.id.name);
+        TextView tvDescription = findViewById(R.id.desc);
+        Button followButton = findViewById(R.id.button);
+        Button msgButton = findViewById(R.id.button2);
 
         // Generate a random integer
         Random random = new Random();
@@ -30,12 +44,21 @@ public class MainActivity extends AppCompatActivity {
 
         int randomNumber = random.nextInt((max - min) + 1) + min;
 
-        // Set the text with a name and the random number
-        String name = "MAD";
-        myTextView.setText(name + " " + randomNumber);
-
-        // Find the Button by its ID
-        Button followButton = findViewById(R.id.button);
+        Intent intent = getIntent();
+        if (intent != null) {
+            String name = getIntent().getStringExtra("keyName");
+            String desc = getIntent().getStringExtra("keyDesc");
+            Boolean foll = getIntent().getBooleanExtra("keyFoll", false);
+            tvName.setText(name);
+            tvDescription.setText(desc);
+            if (foll){
+                followButton.setText("Unfollow");
+            }
+        }
+        else {
+            tvName.setText(user.getName()+randomNumber);
+            tvDescription.setText(user.getDescription());
+        }
 
         // Set an OnClickListener to handle the toggle logic
         followButton.setOnClickListener(v -> {
@@ -50,10 +73,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
 }

@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,54 +34,27 @@ public class ListActivity extends AppCompatActivity {
             return insets;
         });
 
-        List<User> userList = generateRandomUsers(20);
-
-
-    }
-
-    private List<User> generateRandomUsers(int numberOfUsers) {
         List<User> userList = new ArrayList<>();
         Random random = new Random();
 
-        for (int i = 0; i < numberOfUsers; i++) {
-            String name = "User" + (i + 1);
-            String description = "Description " + (i + 1);
-            int id = i + 1;
+        for (int i = 0; i < 20; i++) {
+            int name = new Random().nextInt(9999999);;
+            int description = new Random().nextInt(9999999);;
             boolean followed = random.nextBoolean();
 
-            User user = new User(name, description, id, followed);
+            User user = new User("John Doe", "MAD Developer", 1, false);
+            user.setName("Name"+String.valueOf(name));
+            user.setDescription("Description"+String.valueOf(description));
+            user.setFollowed(followed);
             userList.add(user);
         }
 
-        return userList;
-    }
+        UserAdapter userAdapter = new UserAdapter(userList, this);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(userAdapter);
 
-    private void showAlertDialog() {
-        // Create an AlertDialog.Builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        // Set the dialog title and message
-        builder.setTitle("Profile");
-        builder.setMessage("MADness");
-
-        // Set the positive button and its click listener
-        builder.setPositiveButton("View", (dialog, which) -> {
-            // Create an Intent to start the MainActivity
-            Intent intent = new Intent(this, MainActivity.class);
-            // Start the MainActivity
-            this.startActivity(intent);
-            // Do something when the positive button is clicked
-            dialog.dismiss();
-        });
-
-        // Set the negative button and its click listener
-        builder.setNegativeButton("Close", (dialog, which) -> {
-            // Do something when the negative button is clicked
-            dialog.dismiss();
-        });
-
-        // Create and show the AlertDialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }
